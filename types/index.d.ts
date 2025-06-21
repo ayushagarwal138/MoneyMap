@@ -207,6 +207,7 @@ declare interface TotlaBalanceBoxProps {
   accounts: Account[];
   totalBanks: number;
   totalCurrentBalance: number;
+  user: User;
 }
 
 declare interface FooterProps {
@@ -285,7 +286,7 @@ declare interface CreateTransactionProps {
   amount: string;
   senderId: string;
   senderBankId: string;
-  receiverId: string;
+  reciverId: string;
   receiverBankId: string;
   email: string;
 }

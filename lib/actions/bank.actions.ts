@@ -45,7 +45,7 @@ export const getAccounts = async ({ userId }: getAccountsProps) => {
           type: accountData.type as string,
           subtype: accountData.subtype! as string,
           appwriteItemId: bank.$id,
-          sharaebleId: bank.sharableId,
+          sharableId: bank.sharableId,
         };
 
         return account;
@@ -84,11 +84,12 @@ export const getAccount = async ({ appwriteItemId }: getAccountProps) => {
       (transferData: Transaction) => ({
         id: transferData.$id,
         name: transferData.name!,
-        amount: transferData.amount!,
+        amount: Number(transferData.amount!),
         date: transferData.$createdAt,
         paymentChannel: transferData.channel,
         category: transferData.category,
         type: transferData.senderBankId === bank.$id ? "debit" : "credit",
+        pending: false,
       })
     );
 
@@ -181,5 +182,6 @@ export const getTransactions = async ({
     return parseStringify(transactions);
   } catch (error) {
     console.error("An error occurred while getting the accounts:", error);
+    return parseStringify([]);
   }
 };

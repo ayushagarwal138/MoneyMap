@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
+import toast from "react-hot-toast";
 
 import { createTransfer } from "@/lib/actions/dwolla.actions";
 import { createTransaction } from "@/lib/actions/transaction.actions";
@@ -74,7 +75,7 @@ const PaymentTransferForm = ({ accounts }: PaymentTransferFormProps) => {
           amount: data.amount,
           senderId: senderBank.userId.$id,
           senderBankId: senderBank.$id,
-          receiverId: receiverBank.userId.$id,
+          reciverId: receiverBank.userId.$id,
           receiverBankId: receiverBank.$id,
           email: data.email,
         };
@@ -84,10 +85,12 @@ const PaymentTransferForm = ({ accounts }: PaymentTransferFormProps) => {
         if (newTransaction) {
           form.reset();
           router.push("/");
+          toast.success("Transfer successful!");
         }
       }
     } catch (error) {
       console.error("Submitting create transfer request failed: ", error);
+      toast.error("Transfer failed. Please try again.");
     }
 
     setIsLoading(false);

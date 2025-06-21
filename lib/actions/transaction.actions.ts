@@ -3,10 +3,12 @@
 import { ID, Query } from "node-appwrite";
 import { createAdminClient } from "../appwrite";
 import { parseStringify } from "../utils";
+import { revalidatePath } from "next/cache";
 
 const {
   APPWRITE_DATABASE_ID: DATABASE_ID,
   APPWRITE_TRANSACTION_COLLECTION_ID: TRANSACTION_COLLECTION_ID,
+  APPWRITE_BANK_COLLECTION_ID: BANK_COLLECTION_ID,
 } = process.env;
 
 export const createTransaction = async (transaction: CreateTransactionProps) => {
@@ -23,6 +25,20 @@ export const createTransaction = async (transaction: CreateTransactionProps) => 
         ...transaction
       }
     )
+
+    // Update sender's balance
+    await updateBankBalance({
+      bankId: transaction.senderBankId,
+      amount: -Number(transaction.amount),
+    });
+
+    // Update receiver's balance
+    await updateBankBalance({
+      bankId: transaction.receiverBankId,
+      amount: Number(transaction.amount),
+    });
+
+    revalidatePath("/");
 
     return parseStringify(newTransaction);
   } catch (error) {
@@ -59,3 +75,36 @@ export const getTransactionsByBankId = async ({bankId}: getTransactionsByBankIdP
     console.log(error);
   }
 }
+
+export const updateBankBalance = async ({
+  bankId,
+  amount,
+}: {
+  bankId: string;
+  amount: number;
+}) => {
+  try {
+    const { database } = await createAdminClient();
+
+    const bank = await database.getDocument(
+      DATABASE_ID!,
+      BANK_COLLECTION_ID!,
+      bankId
+    );
+
+    const newBalance = bank.currentBalance + amount;
+
+    await database.updateDocument(
+      DATABASE_ID!,
+      BANK_COLLECTION_ID!,
+      bankId,
+      {
+        currentBalance: newBalance,
+      }
+    );
+
+    revalidatePath("/");
+  } catch (error) {
+    console.log(error);
+  }
+};

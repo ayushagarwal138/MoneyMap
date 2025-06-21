@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import {Inter, IBM_Plex_Serif } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
+import { Toaster } from "react-hot-toast";
 
 const inter = Inter({ subsets: ["latin"], variable: '--font-inter'});
 const ibmPlexSerif= IBM_Plex_Serif({
@@ -42,6 +43,7 @@ export default function RootLayout({
         className={`${inter.variable} ${ibmPlexSerif.variable}`}
       >
         {children}
+        <Toaster />
       </body>
     </html>
   );

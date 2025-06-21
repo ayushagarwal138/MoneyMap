@@ -67,9 +67,14 @@ export const formatDateTime = (dateString: Date) => {
 };
 
 export function formatAmount(amount: number): string {
-  const formatter = new Intl.NumberFormat("en-IN", {
+  if (typeof amount !== 'number' || isNaN(amount)) {
+    console.error('Invalid amount provided to formatAmount:', amount);
+    return 'Invalid amount';
+  }
+
+  const formatter = new Intl.NumberFormat("en-US", {
     style: "currency",
-    currency: "INR",
+    currency: "USD",
     minimumFractionDigits: 2,
   });
 

@@ -27,9 +27,9 @@ const totalPages = Math.ceil(account?.transactions.length / rowsPerPage);
 const indexOfLastTransaction = currentPage * rowsPerPage;
 const indexOfFirstTransaction = indexOfLastTransaction - rowsPerPage;
 
-const currentTransactions = account?.transactions.slice(
+const currentTransactions = account?.transactions?.slice(
   indexOfFirstTransaction, indexOfLastTransaction
-)
+) || [];
   return (
     <div className="transactions">
       <div className="transactions-header">
